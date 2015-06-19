@@ -1,0 +1,500 @@
+'scopeName': 'source.modl'
+'fileTypes': [
+  'modl'
+  'h'
+]
+'firstLineMatch': '-[*]-( Mode:)? ModL -[*]-'
+'name': 'ModL'
+'patterns': [
+  {
+    'include': '#preprocessor-rule-enabled'
+  }
+  {
+    'include': '#preprocessor-rule-disabled'
+  }
+  {
+    'include': '#preprocessor-rule-other'
+  }
+  {
+    'include': '#comments'
+  }
+  {
+    'match': '\\b(break|case|continue|default|do|else|for|goto|if|return|switch|while)\\b'
+    'name': 'keyword.control.modl'
+  }
+  {
+    'match': '\\b(double|integer|long|real|string|Str15|Str31|Str63|Str255|procedure)\\b'
+    'name': 'storage.type.modl'
+  }
+  {
+    'match': '\\b(constant)\\b'
+    'name': 'storage.modifier.modl'
+  }
+  {
+    'comment': 'common Modl constant naming idiom -- cConstantVariable'
+    'match': '\\bc[A-Z]\\w*\\b'
+    'name': 'constant.other.variable.mac-classic.modl'
+  }
+  {
+    'match': '\\bg[A-Z]\\w*\\b'
+    'name': 'variable.other.readwrite.global.mac-classic.modl'
+  }
+  {
+    'match': '\\bs[A-Z]\\w*\\b'
+    'name': 'variable.other.readwrite.static.mac-classic.modl'
+  }
+  {
+    'match': '\\b(BLANK|blank|true|false|TRUE|FALSE)\\b'
+    'name': 'constant.language.modl'
+  }
+  {
+    'match': '\\b((0(x|X)[0-9a-fA-F]*)|(([0-9]+\\.?[0-9]*)|(\\.[0-9]+))((e|E)(\\+|-)?[0-9]+)?)(L|l|UL|ul|u|U|F|f|ll|LL|ull|ULL)?\\b'
+    'name': 'constant.numeric.modl'
+  }
+  {
+    'begin': '"'
+    'beginCaptures':
+      '0':
+        'name': 'punctuation.definition.string.begin.modl'
+    'end': '"'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.definition.string.end.modl'
+    'name': 'string.quoted.double.modl'
+    'patterns': [
+      {
+        'include': '#string_placeholder'
+      }
+    ]
+  }
+  {
+    'begin': '(?x)\n        \t\t^\\s*\\#\\s*(define)\\s+             # define\n        \t\t(?<id>[a-zA-Z_][a-zA-Z0-9_]*)  # macro name'
+    'beginCaptures':
+      '1':
+        'name': 'keyword.control.import.define.modl'
+      '2':
+        'name': 'entity.name.function.preprocessor.modl'
+    'end': '(?=(?://|/\\*))|(?<!\\\\)(?=\\n)'
+    'name': 'meta.preprocessor.macro.modl'
+    'patterns': [
+      {
+        'match': '(?>\\\\\\s*\\n)'
+        'name': 'punctuation.separator.continuation.modl'
+      }
+      {
+        'include': '$base'
+      }
+    ]
+  }
+  {
+    'begin': '^\\s*#\\s*(include)\\b\\s+'
+    'captures':
+      '1':
+        'name': 'keyword.control.import.include.modl'
+    'end': '(?=(?://|/\\*))|(?<!\\\\)(?=\\n)'
+    'name': 'meta.preprocessor.c.include'
+    'patterns': [
+      {
+        'match': '(?>\\\\\\s*\\n)'
+        'name': 'punctuation.separator.continuation.modl'
+      }
+      {
+        'begin': '"'
+        'beginCaptures':
+          '0':
+            'name': 'punctuation.definition.string.begin.modl'
+        'end': '"'
+        'endCaptures':
+          '0':
+            'name': 'punctuation.definition.string.end.modl'
+        'name': 'string.quoted.double.include.modl'
+      }
+      {
+        'begin': '<'
+        'beginCaptures':
+          '0':
+            'name': 'punctuation.definition.string.begin.modl'
+        'end': '>'
+        'endCaptures':
+          '0':
+            'name': 'punctuation.definition.string.end.modl'
+        'name': 'string.quoted.other.lt-gt.include.modl'
+      }
+    ]
+  }
+  {
+    'begin': '^\\s*#\\s*(define|defined|elif|else|if|ifdef|ifndef|line|undef)\\b'
+    'captures':
+      '1':
+        'name': 'keyword.control.import.modl'
+    'end': '(?=(?://|/\\*))|(?<!\\\\)(?=\\n)'
+    'name': 'meta.preprocessor.modl'
+    'patterns': [
+      {
+        'match': '(?>\\\\\\s*\\n)'
+        'name': 'punctuation.separator.continuation.modl'
+      }
+    ]
+  }
+  {
+    'include': '#block'
+  }
+  {
+    'begin': '(?x)\n    \t\t(?:  ^                                 # begin-of-line\n    \t\t  |  \n    \t\t     (?: (?= \\s )           (?<!else|new|return) (?<=\\w)      #  or word + space before name\n    \t\t       | (?= \\s*[A-Za-z_] ) (?<!&&)       (?<=[*&>])   #  or type modifier before name\n    \t\t     )\n    \t\t)\n    \t\t(\\s*) (?!(while|for|do|if|else|switch|catch|enumerate|return|[cr]?iterate)\\s*\\()\n    \t\t(\n    \t\t\t(?: [A-Za-z_][A-Za-z0-9_]*+ | :: )++ |                  # actual name\n    \t\t\t(?: (?<=operator) (?: [-*&<>=+!]+ | \\(\\) | \\[\\] ) )  # if it is a C++ operator\n    \t\t)\n    \t\t \\s*(?=\\()'
+    'beginCaptures':
+      '1':
+        'name': 'punctuation.whitespace.function.leading.modl'
+      '3':
+        'name': 'entity.name.function.modl'
+      '4':
+        'name': 'punctuation.definition.parameters.modl'
+    'end': '(?<=\\})|(?=#)|(;)'
+    'name': 'meta.function.modl'
+    'patterns': [
+      {
+        'include': '#comments'
+      }
+      {
+        'include': '#parens'
+      }
+      {
+        'match': '\\b(const|override|final)\\b'
+        'name': 'storage.modifier.modl'
+      }
+      {
+        'include': '#block'
+      }
+    ]
+  }
+]
+'repository':
+  'access':
+    'captures':
+      '1':
+        'name': 'punctuation.separator.variable-access.modl'
+      '2':
+        'name': 'variable.other.dot-access.modl'
+    'match': '(\\.)([a-zA-Z_][a-zA-Z_0-9]*)\\b(?!\\s*\\()'
+  'block':
+    'patterns': [
+      {
+        'begin': '\\{'
+        'beginCaptures':
+          '0':
+            'name': 'punctuation.section.block.begin.modl'
+        'end': '\\}'
+        'endCaptures':
+          '0':
+            'name': 'punctuation.section.block.end.modl'
+        'name': 'meta.block.modl'
+        'patterns': [
+          {
+            'include': '#block_innards'
+          }
+        ]
+      }
+    ]
+  'block_innards':
+    'patterns': [
+      {
+        'include': '#preprocessor-rule-enabled-block'
+      }
+      {
+        'include': '#preprocessor-rule-disabled-block'
+      }
+      {
+        'include': '#preprocessor-rule-other-block'
+      }
+      {
+        'include': '#access'
+      }
+      {
+        'include': '#c_function_call'
+      }
+      {
+        'captures':
+          '1':
+            'name': 'variable.other.modl'
+          '2':
+            'name': 'punctuation.definition.parameters.modl'
+        'match': '(?x)\n\t\t\t        (?x)\n\t\t\t(?:  \n\t\t\t     (?: (?= \\s )           (?<!else|new|return) (?<=\\w)\\s+      #  or word + space before name\n\t\t\t     )\n\t\t\t)\n\t\t\t(\n\t\t\t\t(?: [A-Za-z_][A-Za-z0-9_]*+ | :: )++    |              # actual name\n\t\t\t\t(?: (?<=operator) (?: [-*&<>=+!]+ | \\(\\) | \\[\\] ) )  # if it is a C++ operator\n\t\t\t)\n\t\t\t \\s*(\\()'
+        'name': 'meta.initialization.modl'
+      }
+      {
+        'include': '#block'
+      }
+      {
+        'include': '$base'
+      }
+    ]
+  'c_function_call':
+    'captures':
+      '1':
+        'name': 'punctuation.whitespace.function-call.leading.modl'
+      '2':
+        'name': 'support.function.any-method.modl'
+      '4':
+        'name': 'punctuation.definition.parameters.modl'
+    'match': '(?x) (?: (?= \\s )  (?:(?<=else|new|return) | (?<!\\w)) (\\s+))?\n\t\t\t(\\b \n\t\t\t\t(?!(while|for|do|if|else|switch|catch|enumerate|return|[cr]?iterate)\\s*\\()(?:(?!NS)[A-Za-z_][A-Za-z0-9_]*+\\b | :: )++                  # actual name\n\t\t\t)\n\t\t\t \\s*(\\()'
+    'name': 'meta.function-call.modl'
+  'comments':
+    'patterns': [
+      {
+        'captures':
+          '1':
+            'name': 'meta.toc-list.banner.block.modl'
+        'match': '^/\\* =(\\s*.*?)\\s*= \\*/$\\n?'
+        'name': 'comment.block.modl'
+      }
+      {
+        'begin': '/\\*'
+        'beginCaptures':
+          '0':
+            'name': 'punctuation.definition.comment.begin.modl'
+        'end': '\\*/'
+        'endCaptures':
+          '0':
+            'name': 'punctuation.definition.comment.end.modl'
+        'name': 'comment.block.modl'
+      }
+      {
+        'match': '\\*/.*\\n'
+        'name': 'invalid.illegal.stray-comment-end.modl'
+      }
+      {
+        'captures':
+          '1':
+            'name': 'meta.toc-list.banner.line.modl'
+        'match': '^// =(\\s*.*?)\\s*=\\s*$\\n?'
+        'name': 'comment.line.banner.c++'
+      }
+      {
+        'begin': '(^[ \\t]+)?(?=//)'
+        'beginCaptures':
+          '1':
+            'name': 'punctuation.whitespace.comment.leading.c++'
+        'end': '(?!\\G)'
+        'patterns': [
+          {
+            'begin': '//'
+            'beginCaptures':
+              '0':
+                'name': 'punctuation.definition.comment.c++'
+            'end': '\\n'
+            'name': 'comment.line.double-slash.c++'
+            'patterns': [
+              {
+                'match': '(?>\\\\\\s*\\n)'
+                'name': 'punctuation.separator.continuation.c++'
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  'disabled':
+    'begin': '^\\s*#\\s*if(n?def)?\\b.*$'
+    'comment': 'eat nested preprocessor if(def)s'
+    'end': '^\\s*#\\s*endif\\b'
+    'patterns': [
+      {
+        'include': '#disabled'
+      }
+    ]
+  'parens':
+    'begin': '\\('
+    'beginCaptures':
+      '0':
+        'name': 'punctuation.section.parens.begin.modl'
+    'end': '\\)'
+    'endCaptures':
+      '0':
+        'name': 'punctuation.section.parens.end.modl'
+    'name': 'meta.parens.modl'
+    'patterns': [
+      {
+        'include': '$base'
+      }
+    ]
+
+  'preprocessor-rule-disabled':
+    'begin': '^\\s*(#(if)\\s+(0)\\b).*'
+    'captures':
+      '1':
+        'name': 'meta.preprocessor.modl'
+      '2':
+        'name': 'keyword.control.import.if.modl'
+      '3':
+        'name': 'constant.numeric.preprocessor.modl'
+    'end': '^\\s*(#\\s*(endif)\\b)'
+    'patterns': [
+      {
+        'begin': '^\\s*(#\\s*(else)\\b)'
+        'captures':
+          '1':
+            'name': 'meta.preprocessor.modl'
+          '2':
+            'name': 'keyword.control.import.else.modl'
+        'end': '(?=^\\s*#\\s*endif\\b)'
+        'patterns': [
+          {
+            'include': '$base'
+          }
+        ]
+      }
+      {
+        'begin': ''
+        'end': '(?=^\\s*#\\s*(else|endif)\\b)'
+        'name': 'comment.block.preprocessor.if-branch'
+        'patterns': [
+          {
+            'include': '#disabled'
+          }
+        ]
+      }
+    ]
+  'preprocessor-rule-disabled-block':
+    'begin': '^\\s*(#(if)\\s+(0)\\b).*'
+    'captures':
+      '1':
+        'name': 'meta.preprocessor.modl'
+      '2':
+        'name': 'keyword.control.import.if.modl'
+      '3':
+        'name': 'constant.numeric.preprocessor.modl'
+    'end': '^\\s*(#\\s*(endif)\\b)'
+    'patterns': [
+      {
+        'begin': '^\\s*(#\\s*(else)\\b)'
+        'captures':
+          '1':
+            'name': 'meta.preprocessor.modl'
+          '2':
+            'name': 'keyword.control.import.else.modl'
+        'end': '(?=^\\s*#\\s*endif\\b)'
+        'patterns': [
+          {
+            'include': '#block_innards'
+          }
+        ]
+      }
+      {
+        'begin': ''
+        'end': '(?=^\\s*#\\s*(else|endif)\\b)'
+        'name': 'comment.block.preprocessor.if-branch.in-block'
+        'patterns': [
+          {
+            'include': '#disabled'
+          }
+        ]
+      }
+    ]
+  'preprocessor-rule-enabled':
+    'begin': '^\\s*(#(if)\\s+(0*1)\\b)'
+    'captures':
+      '1':
+        'name': 'meta.preprocessor.modl'
+      '2':
+        'name': 'keyword.control.import.if.modl'
+      '3':
+        'name': 'constant.numeric.preprocessor.modl'
+    'end': '^\\s*(#\\s*(endif)\\b)'
+    'patterns': [
+      {
+        'begin': '^\\s*(#\\s*(else)\\b).*'
+        'captures':
+          '1':
+            'name': 'meta.preprocessor.modl'
+          '2':
+            'name': 'keyword.control.import.else.modl'
+        'contentName': 'comment.block.preprocessor.else-branch'
+        'end': '(?=^\\s*#\\s*endif\\b)'
+        'patterns': [
+          {
+            'include': '#disabled'
+          }
+        ]
+      }
+      {
+        'begin': ''
+        'end': '(?=^\\s*#\\s*(else|endif)\\b)'
+        'patterns': [
+          {
+            'include': '$base'
+          }
+        ]
+      }
+    ]
+  'preprocessor-rule-enabled-block':
+    'begin': '^\\s*(#(if)\\s+(0*1)\\b)'
+    'captures':
+      '1':
+        'name': 'meta.preprocessor.modl'
+      '2':
+        'name': 'keyword.control.import.if.modl'
+      '3':
+        'name': 'constant.numeric.preprocessor.modl'
+    'end': '^\\s*(#\\s*(endif)\\b)'
+    'patterns': [
+      {
+        'begin': '^\\s*(#\\s*(else)\\b).*'
+        'captures':
+          '1':
+            'name': 'meta.preprocessor.modl'
+          '2':
+            'name': 'keyword.control.import.else.modl'
+        'contentName': 'comment.block.preprocessor.else-branch.in-block'
+        'end': '(?=^\\s*#\\s*endif\\b)'
+        'patterns': [
+          {
+            'include': '#disabled'
+          }
+        ]
+      }
+      {
+        'begin': ''
+        'end': '(?=^\\s*#\\s*(else|endif)\\b)'
+        'patterns': [
+          {
+            'include': '#block_innards'
+          }
+        ]
+      }
+    ]
+  'preprocessor-rule-other':
+    'begin': '^\\s*(#\\s*(if(n?def)?)\\b.*?(?:(?=(?://|/\\*))|$))'
+    'captures':
+      '1':
+        'name': 'meta.preprocessor.modl'
+      '2':
+        'name': 'keyword.control.import.modl'
+    'end': '^\\s*(#\\s*(endif)\\b)'
+    'patterns': [
+      {
+        'include': '$base'
+      }
+    ]
+  'preprocessor-rule-other-block':
+    'begin': '^\\s*(#\\s*(if(n?def)?)\\b.*?(?:(?=(?://|/\\*))|$))'
+    'captures':
+      '1':
+        'name': 'meta.preprocessor.modl'
+      '2':
+        'name': 'keyword.control.import.modl'
+    'end': '^\\s*(#\\s*(endif)\\b)'
+    'patterns': [
+      {
+        'include': '#block_innards'
+      }
+    ]
+  'string_placeholder':
+    'patterns': [
+      {
+        'match': '(?x)%\n    \t\t\t\t\t\t(\\d+\\$)?                             # field (argument #)\n    \t\t\t\t\t\t[#0\\- +\']*                           # flags\n    \t\t\t\t\t\t[,;:_]?                              # separator character (AltiVec)\n    \t\t\t\t\t\t((-?\\d+)|\\*(-?\\d+\\$)?)?              # minimum field width\n    \t\t\t\t\t\t(\\.((-?\\d+)|\\*(-?\\d+\\$)?)?)?         # precision\n    \t\t\t\t\t\t(hh|h|ll|l|j|t|z|q|L|vh|vl|v|hv|hl)? # length modifier\n    \t\t\t\t\t\t[diouxXDOUeEfFgGaACcSspn%]           # conversion type\n    \t\t\t\t\t'
+        'name': 'constant.other.placeholder.modl'
+      }
+      {
+        'match': '%'
+        'name': 'invalid.illegal.placeholder.modl'
+      }
+    ]
